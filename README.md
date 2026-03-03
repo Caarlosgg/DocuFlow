@@ -1,4 +1,4 @@
-# 🚀 DocuFlow — Sistema RAG Empresarial
+# 🚀 DocuFlow — Sistema RAG Empresarial (Fase Beta)
 
 <div align="center">
 
@@ -269,6 +269,5 @@ Proyecto de uso educativo y personal. Respeta los términos de servicio de [Groq
 
 <div align="center">
 
-**Hecho con ❤️ usando FastAPI, Qdrant y LLaMA**
 
 </div>
