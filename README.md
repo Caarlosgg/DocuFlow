@@ -1,86 +1,129 @@
-# DocuFlow — Sistema RAG Empresarial
+# 🚀 DocuFlow — Sistema RAG Empresarial
 
-<p align="center">
-  <strong>Consulta tus documentos corporativos con Inteligencia Artificial</strong><br>
-  <em>PDF & CSV → Embeddings → Búsqueda Vectorial → Respuesta LLM</em>
-</p>
+<div align="center">
 
----
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![Qdrant](https://img.shields.io/badge/Qdrant-1.12-FF4088?style=for-the-badge&logo=qdrant&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Groq](https://img.shields.io/badge/Groq-LLaMA_3.3_70B-F55036?style=for-the-badge&logo=groq&logoColor=white)
 
-## Descripción
+**Consulta tus documentos corporativos con Inteligencia Artificial**
 
-**DocuFlow** es un sistema **RAG (Retrieval-Augmented Generation)** de grado empresarial que permite cargar documentos PDF y CSV, indexarlos como vectores semánticos en Qdrant y consultarlos en lenguaje natural usando un LLM de última generación a través de Groq.
+*PDF & CSV → Embeddings → Búsqueda Vectorial → Respuesta LLM*
 
-### Características principales
-
-- **Chat IA** — Pregunta sobre tus documentos y obtén respuestas precisas con fuentes citadas
-- **Subida de archivos** — Interfaz drag-and-drop para cargar PDFs y CSVs desde el navegador
-- **Reindexación en caliente** — Reindexa la base de conocimiento sin reiniciar el servidor
-- **Dashboard** — Vista general del estado del sistema, archivos y tecnología
-- **Modelo LLM configurable** — Cambia de modelo editando una variable de entorno
-- **Doble modo Qdrant** — Docker (producción) o local en disco (desarrollo rápido)
+</div>
 
 ---
 
-## Stack Tecnológico
+## 📋 ¿Qué es DocuFlow?
 
-| Componente | Tecnología | Descripción |
+**DocuFlow** es un sistema **RAG (Retrieval-Augmented Generation)** de grado empresarial. Carga tus documentos PDF y CSV, los indexa como vectores semánticos en Qdrant y consúltalos en lenguaje natural usando LLaMA 3.3 a través de Groq con latencia ultra-baja.
+
+---
+
+## ✨ Características
+
+| Función | Descripción |
+|---|---|
+| 💬 **Chat IA** | Pregunta sobre tus documentos en lenguaje natural |
+| 📁 **Subida de archivos** | Drag & drop de PDFs y CSVs desde el navegador |
+| 🔍 **Filtro por archivo** | Selecciona qué documentos usar en cada consulta |
+| 🗑️ **Gestión de archivos** | Elimina documentos directamente desde el frontend |
+| ⚡ **Reindexación en caliente** | Indexa nuevos documentos sin reiniciar el servidor |
+| 📊 **Dashboard** | Vista general del sistema, estado y métricas |
+
+---
+
+## 🏗️ Arquitectura
+
+```
+                    ┌─────────────────────────────────┐
+                    │         USUARIO (Browser)        │
+                    │    HTML + CSS + JavaScript SPA   │
+                    └────────────────┬────────────────┘
+                                     │ HTTP REST
+                    ┌────────────────▼────────────────┐
+                    │         FastAPI Backend          │
+                    │   /api/chat  /api/upload  ...    │
+                    └──────┬─────────────┬────────────┘
+                           │             │
+           ┌───────────────▼──┐    ┌────▼──────────────────┐
+           │   RAG Service    │    │     ETL Pipeline       │
+           │  Busca vectores  │    │  PDF → PyPDF           │
+           │  Llama al LLM    │    │  CSV → Polars          │
+           └───────┬──────────┘    │  Chunks → Embeddings   │
+                   │               └────────┬───────────────┘
+        ┌──────────▼──────────┐             │
+        │     Qdrant (Docker) │◄────────────┘
+        │  Base Datos Vectorial│
+        └──────────┬──────────┘
+                   │
+        ┌──────────▼──────────┐
+        │    Groq API         │
+        │  LLaMA 3.3 70B      │
+        └─────────────────────┘
+```
+
+---
+
+## 🛠️ Stack Tecnológico
+
+| Capa | Tecnología | Motivo |
 |---|---|---|
-| **LLM** | Groq + LLaMA 3.3 70B | Inferencia ultra-rápida vía API |
-| **Embeddings** | HuggingFace `all-MiniLM-L6-v2` | Modelo local, CPU, 384 dimensiones |
-| **Vector DB** | Qdrant (Docker) | Base de datos vectorial de alto rendimiento |
-| **Backend** | FastAPI + Uvicorn | API REST asíncrona con documentación automática |
-| **Frontend** | HTML/CSS/JS vanilla | SPA ligera con tema oscuro profesional |
-| **ETL** | LangChain + PyPDF + Polars | Pipeline de extracción y chunking |
-| **Orquestación** | Docker Compose | Infraestructura como código |
+| **LLM** | Groq + LLaMA 3.3 70B | Inferencia < 500ms |
+| **Embeddings** | HuggingFace `all-MiniLM-L6-v2` | Local, CPU, privacidad total |
+| **Vector DB** | Qdrant (Docker) | Alto rendimiento, filtros avanzados |
+| **Backend** | FastAPI + Uvicorn | Async, tipado, docs automáticas |
+| **Frontend** | HTML / CSS / JS Vanilla | SPA ligera, sin dependencias |
+| **ETL** | LangChain + PyPDF + Polars | Pipeline robusto y rápido |
+| **Config** | python-dotenv | Gestión segura de secretos |
+| **Orquestación** | Docker Compose | Infraestructura reproducible |
 
 ---
 
-## Estructura del Proyecto
+## 📁 Estructura del Proyecto
 
 ```
 DocuFlow/
-├── backend/
-│   ├── main.py           # Servidor FastAPI (lifespan, endpoints, static files)
-│   ├── rag_service.py    # Servicio RAG (embedding → búsqueda → LLM)
-│   └── schemas.py        # Modelos Pydantic (request/response)
-├── core/
-│   ├── config.py         # Configuración centralizada (Settings dataclass)
-│   └── ingest.py         # Pipeline ETL (PDF/CSV → chunks → Qdrant)
-├── frontend/
+├── 📂 backend/
+│   ├── main.py           # Servidor FastAPI, endpoints, static files
+│   ├── rag_service.py    # Servicio RAG (búsqueda vectorial + LLM)
+│   └── schemas.py        # Modelos Pydantic request/response
+├── 📂 core/
+│   ├── config.py         # Configuración centralizada (Settings)
+│   └── ingest.py         # Pipeline ETL (PDF/CSV → Qdrant)
+├── 📂 frontend/
 │   ├── index.html        # SPA: Dashboard + Chat + Upload
-│   ├── css/styles.css    # Estilos dark theme responsive
-│   └── js/app.js         # Lógica de navegación, chat, upload
-├── data/                 # Directorio de documentos (PDFs, CSVs)
-├── docker-compose.yml    # Qdrant container
-├── requirements.txt      # Dependencias Python
-├── .env                  # Variables de entorno (no se sube a Git)
-├── .env.example          # Plantilla de configuración
-├── .gitignore
-└── README.md
+│   ├── css/styles.css    # Dark theme responsive
+│   └── js/app.js         # Lógica navegación, chat, filtros
+├── 📂 data/              # ← Coloca aquí tus PDFs y CSVs
+├── 🐳 docker-compose.yml # Qdrant container + volumen persistente
+├── 📄 requirements.txt   # Dependencias Python
+├── 🔒 .env               # Variables de entorno (no subir a Git)
+└── 📄 .env.example       # Plantilla de configuración
 ```
 
 ---
 
-## Requisitos Previos
+## ⚙️ Instalación
 
-- **Python 3.11+** (probado con 3.12)
-- **Docker Desktop** (para Qdrant en modo Docker)
-- **Clave API de Groq** — gratuita en [console.groq.com/keys](https://console.groq.com/keys)
+### Requisitos previos
+
+- **Python 3.11+**
+- **Docker Desktop** activo
+- **API Key de Groq** → [console.groq.com/keys](https://console.groq.com/keys) *(gratuita)*
 
 ---
 
-## Instalación y Primer Uso
-
-### 1. Clonar / descargar el proyecto
+### 1️⃣ Clonar el repositorio
 
 ```bash
-cd tu-directorio
-git clone <url-del-repo> DocuFlow
+git clone https://github.com/Caarlosgg/DocuFlow.git
 cd DocuFlow
 ```
 
-### 2. Crear entorno virtual e instalar dependencias
+### 2️⃣ Entorno virtual y dependencias
 
 ```bash
 python -m venv .venv
@@ -88,262 +131,144 @@ python -m venv .venv
 # Windows
 .venv\Scripts\activate
 
-# Linux/macOS
+# Linux / macOS
 source .venv/bin/activate
 
 pip install -r requirements.txt
 ```
 
-### 3. Configurar variables de entorno
+### 3️⃣ Configurar variables de entorno
 
 ```bash
+# Windows
 copy .env.example .env
+
+# Linux/macOS
+cp .env.example .env
 ```
 
-Editar `.env` y poner tu clave de Groq:
+Edita `.env` y añade tu clave:
 
-```ini
-GROQ_API_KEY=gsk_tu_clave_aqui
-
-# Modo Qdrant: "remote" (Docker) o "local" (sin Docker)
-QDRANT_MODE=remote
-QDRANT_HOST=127.0.0.1
+```env
+GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+QDRANT_HOST=localhost
 QDRANT_PORT=6333
-
-# Modelo LLM (cambiar para mejorar/abaratar)
-LLM_MODEL=llama-3.3-70b-versatile
-
 COLLECTION_NAME=docuflow_core
+LLM_MODEL=llama-3.3-70b-versatile
 ```
 
-### 4. Levantar Qdrant con Docker
+### 4️⃣ Levantar Qdrant
 
 ```bash
 docker compose up -d
 ```
 
-Verificar que está activo:
+### 5️⃣ Indexar documentos
 
-```bash
-curl http://127.0.0.1:6333/healthz
-# Respuesta esperada: "healthz check passed"
-```
-
-### 5. Colocar documentos en `data/`
-
-Copia tus archivos PDF y/o CSV a la carpeta `data/`:
-
-```bash
-# Ejemplo
-copy mi_reporte.pdf data/
-copy datos_ventas.csv data/
-```
-
-### 6. Ejecutar la ingesta
+Coloca tus PDFs/CSVs en `data/` y ejecuta:
 
 ```bash
 python -m core.ingest --reset
 ```
 
-Esto escaneará `data/`, extraerá texto, generará embeddings y los indexará en Qdrant.
-
-### 7. Iniciar el servidor
+### 6️⃣ Iniciar el servidor
 
 ```bash
-python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000
+uvicorn backend.main:app --host 0.0.0.0 --port 8000
 ```
 
-### 8. Abrir en el navegador
+**Abre** → `http://localhost:8000` 🎉
+
+---
+
+## 🖥️ Uso
 
 ```
 http://localhost:8000
+        │
+        ├── 📊 Dashboard    → Estado del sistema, archivos cargados
+        ├── 💬 Chat IA      → Haz preguntas, activa filtros por archivo
+        └── 📁 Subir Archivos → Drag & drop, reindexar, eliminar
 ```
 
 ---
 
-## Uso de la Aplicación
+## 🔌 API Endpoints
 
-### Dashboard
-
-La pantalla principal muestra:
-- **Estado del sistema** — Backend, Qdrant y documentos indexados
-- **Stack tecnológico** — Modelo LLM, embeddings y colección activa
-- **Archivos disponibles** — Lista de PDFs/CSVs en el sistema
-- **Accesos directos** — Botones para ir al Chat o Subir Archivos
-
-### Chat IA
-
-1. Haz clic en **"Chat IA"** en la barra de navegación
-2. Escribe tu pregunta en el campo de texto
-3. El sistema busca los fragmentos más relevantes y genera una respuesta
-4. Haz clic en **"X fuentes utilizadas"** para ver los fragmentos exactos
-5. Usa el selector **"Contexto"** para controlar cuántos fragmentos recuperar (2-10)
-6. El botón de **papelera** limpia el historial del chat
-
-### Subir Archivos
-
-1. Haz clic en **"Subir Archivos"** en la barra de navegación
-2. **Arrastra** archivos PDF/CSV a la zona de drop, o **haz clic** para seleccionar
-3. Revisa los archivos en la cola y haz clic en **"Subir Archivos"**
-4. Tras subir, haz clic en **"Reindexar Ahora"** para que estén disponibles en el chat
-
-### Navegación
-
-- Usa la **barra superior** para moverte entre Dashboard, Chat y Upload
-- En Chat y Upload hay un **botón de flecha ←** para volver al Dashboard
-- El indicador de estado en la esquina superior derecha muestra si el sistema está Online/Offline
-
----
-
-## Cómo Cambiar / Mejorar el Modelo LLM
-
-El modelo se configura en el archivo `.env`:
-
-```ini
-LLM_MODEL=llama-3.3-70b-versatile
 ```
-
-### Modelos disponibles en Groq (Feb 2026)
-
-| Modelo | Velocidad | Calidad | Ideal para |
-|---|---|---|---|
-| `llama-3.3-70b-versatile` | Media | Muy alta | Uso general, respuestas complejas |
-| `llama-3.1-8b-instant` | Muy rápida | Buena | Respuestas rápidas, menor costo |
-| `gemma2-9b-it` | Rápida | Buena | Alternativa ligera |
-| `mixtral-8x7b-32768` | Rápida | Alta | Contextos largos (32K tokens) |
-
-Para cambiar el modelo:
-1. Edita `LLM_MODEL` en `.env`
-2. Reinicia el servidor (`Ctrl+C` y volver a lanzar uvicorn)
-
-> Consulta los modelos actuales en [console.groq.com/docs/models](https://console.groq.com/docs/models)
-
----
-
-## Cómo Añadir Nuevos Documentos
-
-### Opción A — Desde el Frontend (recomendado)
-
-1. Abre `http://localhost:8000`
-2. Ve a **"Subir Archivos"**
-3. Arrastra tus PDFs/CSVs
-4. Sube → Reindexar
-
-### Opción B — Desde la terminal
-
-```bash
-# 1. Copiar archivos a data/
-copy nuevo_archivo.pdf data/
-
-# 2. Reindexar
-python -m core.ingest --reset
-```
-
-### Opción C — API REST directa
-
-```bash
-# Subir archivo
-curl -X POST http://localhost:8000/api/upload \
-  -F "files=@mi_archivo.pdf"
-
-# Reindexar
-curl -X POST http://localhost:8000/api/reindex
+GET    /api/health              → Estado del sistema
+POST   /api/chat                → Consulta RAG con filtros opcionales
+POST   /api/upload              → Subir PDF o CSV
+GET    /api/files               → Listar documentos indexados
+POST   /api/reindex             → Reindexar toda la colección
+DELETE /api/files/{filename}    → Eliminar un documento
+GET    /docs                    → Swagger UI automático
 ```
 
 ---
 
-## Endpoints de la API
+## 🔧 Modelos LLM disponibles en Groq
 
-| Método | Ruta | Descripción |
+| Modelo | Velocidad | Calidad |
 |---|---|---|
-| `GET` | `/` | Frontend (SPA) |
-| `GET` | `/api/health` | Estado del sistema |
-| `POST` | `/api/chat` | Consulta RAG (query + k) |
-| `POST` | `/api/upload` | Subir archivos PDF/CSV |
-| `GET` | `/api/files` | Listar archivos en data/ |
-| `POST` | `/api/reindex` | Reindexar toda la colección |
-| `GET` | `/docs` | Documentación Swagger interactiva |
+| `llama-3.3-70b-versatile` | ⚡⚡ | ⭐⭐⭐⭐⭐ |
+| `llama-3.1-8b-instant` | ⚡⚡⚡ | ⭐⭐⭐ |
+| `mixtral-8x7b-32768` | ⚡⚡ | ⭐⭐⭐⭐ |
+| `gemma2-9b-it` | ⚡⚡⚡ | ⭐⭐⭐ |
 
-### Ejemplo de consulta
+Cambia el modelo editando `LLM_MODEL` en `.env`, sin reiniciar.
+
+---
+
+## ❗ Solución de Problemas
+
+<details>
+<summary><b>Qdrant no responde</b></summary>
 
 ```bash
-curl -X POST http://localhost:8000/api/chat \
-  -H "Content-Type: application/json" \
-  -d '{"query": "¿Cuáles fueron los ingresos totales?", "k": 4}'
+docker compose down
+Remove-Item -Recurse -Force .\qdrant_storage  # Windows
+rm -rf ./qdrant_storage                        # Linux/macOS
+docker compose up -d
 ```
+</details>
 
----
+<details>
+<summary><b>Puerto 8000 ocupado</b></summary>
 
-## Modo Qdrant Local (sin Docker)
+```bash
+# Windows
+netstat -ano | findstr :8000
+taskkill /PID <pid> /F
 
-Si no tienes Docker, puedes usar Qdrant en modo local (almacenamiento en disco):
-
-```ini
-# En .env
-QDRANT_MODE=local
+# Linux/macOS
+lsof -i :8000
+kill -9 <pid>
 ```
+</details>
 
-Los datos se guardarán en `qdrant_data/`. No requiere Docker pero tiene limitaciones de rendimiento para grandes volúmenes.
+<details>
+<summary><b>Error de API Key</b></summary>
 
----
+Verifica que `.env` contiene `GROQ_API_KEY=gsk_...` y reinicia el servidor tras el cambio.
+</details>
 
-## Variables de Entorno
+<details>
+<summary><b>Modelo LLM deprecado</b></summary>
 
-| Variable | Descripción | Valor por defecto |
-|---|---|---|
-| `GROQ_API_KEY` | Clave API de Groq (obligatoria) | — |
-| `QDRANT_MODE` | `remote` (Docker) o `local` (disco) | `local` |
-| `QDRANT_HOST` | Host de Qdrant | `127.0.0.1` |
-| `QDRANT_PORT` | Puerto de Qdrant | `6333` |
-| `LLM_MODEL` | Modelo de Groq a usar | `llama-3.3-70b-versatile` |
-| `COLLECTION_NAME` | Nombre de la colección vectorial | `docuflow_core` |
-| `BACKEND_HOST` | Host del servidor | `0.0.0.0` |
-| `BACKEND_PORT` | Puerto del servidor | `8000` |
+Cambia `LLM_MODEL` en `.env` por uno de la tabla de modelos disponibles y reinicia el servidor.
+</details>
 
 ---
 
-## Arquitectura
+## 📄 Licencia
 
-```
-┌────────────────┐     ┌──────────────────┐     ┌──────────────┐
-│   Frontend     │────▶│   FastAPI         │────▶│   Groq API   │
-│   (HTML/JS)    │◀────│   Backend         │◀────│   (LLaMA 3)  │
-└────────────────┘     └──────┬───────────┘     └──────────────┘
-                              │
-                    ┌─────────▼─────────┐
-                    │     Qdrant DB     │
-                    │ (Vectores 384d)   │
-                    └───────────────────┘
-                              ▲
-                    ┌─────────┴─────────┐
-                    │   Pipeline ETL    │
-                    │ PDF/CSV → Chunks  │
-                    │ → Embeddings      │
-                    └───────────────────┘
-```
-
-**Flujo de una consulta:**
-1. El usuario escribe una pregunta en el chat
-2. El backend genera un embedding de la pregunta con HuggingFace
-3. Qdrant busca los K fragmentos más similares (cosine similarity)
-4. Se construye un prompt con el contexto recuperado
-5. Groq genera la respuesta con LLaMA 3.3 70B
-6. Se devuelve la respuesta + fuentes al frontend
+Proyecto de uso educativo y personal. Respeta los términos de servicio de [Groq](https://groq.com) y [HuggingFace](https://huggingface.co).
 
 ---
 
-## Solución de Problemas
+<div align="center">
 
-| Problema | Solución |
-|---|---|
-| `GROQ_API_KEY no configurada` | Edita `.env` y añade tu clave |
-| `ConnectionRefused` en Qdrant | Ejecuta `docker compose up -d` |
-| Puerto 8000 ocupado | `netstat -ano \| findstr :8000` → `taskkill /PID <pid> /F` |
-| Modelo deprecado | Cambia `LLM_MODEL` en `.env` (ver tabla de modelos) |
-| Qdrant corrupto | Elimina `qdrant_storage/`, ejecuta `docker compose down && docker compose up -d` |
+**Hecho con ❤️ usando FastAPI, Qdrant y LLaMA**
 
----
-
-## Licencia
-
-Proyecto educativo / personal. Usa las APIs y modelos según sus propios términos de servicio.
+</div>
