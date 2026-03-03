@@ -1,0 +1,29 @@
+# ============================================================
+# DocuFlow — Sistema RAG Empresarial
+# Dependencias de Producción (Python 3.11+)
+# ============================================================
+
+# --- LangChain Core & Integraciones ---
+langchain==0.3.13
+langchain-groq==0.2.4
+langchain-huggingface==0.1.2
+langchain-qdrant==0.2.0
+langchain-text-splitters==0.3.4
+
+# --- Embeddings Local (CPU) ---
+sentence-transformers==3.3.1
+
+# --- Base de Datos Vectorial ---
+qdrant-client==1.12.1
+
+# --- Backend API ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+
+# --- ETL & Procesamiento de Datos ---
+pypdf==5.1.0
+polars==1.17.1
+
+# --- Configuración & Seguridad ---
+python-dotenv==1.0.1

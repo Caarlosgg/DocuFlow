@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocuFlow — Asistente Documental IA</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@14.1.4/marked.min.js"></script>
+</head>
+<body>
+    <div id="app">
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- TOP NAVIGATION BAR                                     -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <nav class="navbar">
+            <div class="navbar__brand" data-view="dashboard">
+                <div class="navbar__logo">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                </div>
+                <span class="navbar__name">DocuFlow</span>
+            </div>
+
+            <div class="navbar__links">
+                <button class="navbar__link active" data-view="dashboard">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    Dashboard
+                </button>
+                <button class="navbar__link" data-view="chat">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Chat IA
+                </button>
+                <button class="navbar__link" data-view="upload">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Subir Archivos
+                </button>
+            </div>
+
+            <div class="navbar__status" id="navbar-status">
+                <span class="navbar__dot" id="nav-dot"></span>
+                <span class="navbar__status-text" id="nav-status-text">Comprobando...</span>
+            </div>
+        </nav>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- VIEW: DASHBOARD                                        -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="view view--active" id="view-dashboard">
+            <div class="dashboard">
+                <div class="dashboard__hero">
+                    <div class="dashboard__hero-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                    </div>
+                    <h1>Bienvenido a DocuFlow</h1>
+                    <p>Sistema RAG empresarial para consultar documentos con Inteligencia Artificial</p>
+                </div>
+
+                <div class="dashboard__actions">
+                    <button class="action-card" data-view="chat">
+                        <div class="action-card__icon action-card__icon--chat">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <h3>Consultar Documentos</h3>
+                        <p>Haz preguntas sobre tus PDFs y CSVs usando IA generativa</p>
+                    </button>
+                    <button class="action-card" data-view="upload">
+                        <div class="action-card__icon action-card__icon--upload">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <h3>Subir Archivos</h3>
+                        <p>Carga nuevos PDFs y CSVs para ampliar la base de conocimiento</p>
+                    </button>
+                </div>
+
+                <div class="dashboard__grid">
+                    <div class="stat-card">
+                        <div class="stat-card__header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                            <span>Estado del Sistema</span>
+                        </div>
+                        <div class="stat-card__body">
+                            <div class="status-row">
+                                <span class="status-dot" id="dot-backend"></span>
+                                <span>Backend API</span>
+                                <span class="status-label" id="label-backend">—</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="status-dot" id="dot-qdrant"></span>
+                                <span>Qdrant DB</span>
+                                <span class="status-label" id="label-qdrant">—</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="status-dot" id="dot-docs"></span>
+                                <span>Documentos Indexados</span>
+                                <span class="status-label" id="label-docs">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card__header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            <span>Stack Tecnológico</span>
+                        </div>
+                        <div class="stat-card__body">
+                            <div class="tech-badges">
+                                <span class="badge badge--accent">LLaMA 3.3 70B</span>
+                                <span class="badge badge--green">Groq</span>
+                                <span class="badge badge--orange">Qdrant</span>
+                                <span class="badge">LangChain</span>
+                                <span class="badge">FastAPI</span>
+                                <span class="badge">HuggingFace</span>
+                            </div>
+                            <div class="stat-card__info">
+                                <div class="info-row"><span>Modelo LLM</span><span id="info-llm">—</span></div>
+                                <div class="info-row"><span>Embeddings</span><span id="info-embed">—</span></div>
+                                <div class="info-row"><span>Colección</span><span id="info-collection">—</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card__header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            <span>Archivos Disponibles</span>
+                        </div>
+                        <div class="stat-card__body" id="files-list-dashboard">
+                            <p class="text-muted">Cargando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- VIEW: CHAT                                             -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="view" id="view-chat">
+            <div class="chat-view">
+                <header class="chat-view__header">
+                    <button class="btn-back" data-view="dashboard" title="Volver al Dashboard">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    </button>
+                    <div class="chat-view__header-info">
+                        <h2>Chat con DocuFlow</h2>
+                        <span>Consulta tus documentos corporativos con IA</span>
+                    </div>
+                    <div class="chat-view__controls">
+                        <button class="btn-icon" id="btn-file-filter" title="Filtrar por archivos" type="button">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                        </button>
+                        <label class="k-control" title="Número de fragmentos a buscar">
+                            <span>Contexto:</span>
+                            <select id="k-selector">
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4" selected>4</option>
+                                <option value="6">6</option>
+                                <option value="8">8</option>
+                                <option value="10">10</option>
+                            </select>
+                        </label>
+                        <button class="btn-icon btn-icon--danger" id="btn-clear" title="Limpiar historial">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Panel de filtro de archivos (colapsable) -->
+                <div class="file-filter-panel" id="file-filter-panel" style="display:none;">
+                    <div class="file-filter-panel__header">
+                        <div class="file-filter-panel__title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                            <span>Filtrar por archivos</span>
+                        </div>
+                        <div class="file-filter-panel__actions">
+                            <button class="file-filter-btn" id="btn-select-all" type="button">Todos</button>
+                            <button class="file-filter-btn" id="btn-select-none" type="button">Ninguno</button>
+                        </div>
+                    </div>
+                    <div class="file-filter-panel__list" id="file-filter-list">
+                        <p class="text-muted">Cargando archivos...</p>
+                    </div>
+                    <div class="file-filter-panel__footer">
+                        <span class="file-filter-panel__count" id="filter-count">Todos los archivos seleccionados</span>
+                    </div>
+                </div>
+
+                <div class="chat-view__messages" id="messages">
+                    <div class="welcome-chat" id="welcome">
+                        <div class="welcome-chat__icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </div>
+                        <h2>¿En qué puedo ayudarte?</h2>
+                        <p>Haz una pregunta sobre tus documentos indexados</p>
+                        <div class="welcome-chat__suggestions">
+                            <button class="suggestion" data-query="Resume los puntos principales de los documentos disponibles">📋 Resumen general</button>
+                            <button class="suggestion" data-query="¿Qué documentos están disponibles en la base de conocimiento?">📂 Documentos disponibles</button>
+                            <button class="suggestion" data-query="¿Cuáles son los datos financieros más relevantes?">📊 Datos financieros</button>
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="chat-view__input">
+                    <form id="chat-form" class="input-form">
+                        <div class="input-form__container">
+                            <textarea id="query-input" class="input-form__textarea" placeholder="Escribe tu pregunta sobre los documentos..." rows="1" maxlength="4000" autocomplete="off"></textarea>
+                            <button type="submit" class="input-form__send" id="btn-send" title="Enviar">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                            </button>
+                        </div>
+                        <p class="input-form__hint">DocuFlow responde basándose exclusivamente en los documentos indexados.</p>
+                    </form>
+                </footer>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- VIEW: UPLOAD                                           -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="view" id="view-upload">
+            <div class="upload-view">
+                <header class="upload-view__header">
+                    <button class="btn-back" data-view="dashboard" title="Volver al Dashboard">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    </button>
+                    <div>
+                        <h2>Subir Archivos</h2>
+                        <span>Añade documentos PDF o CSV a la base de conocimiento</span>
+                    </div>
+                </header>
+
+                <div class="upload-view__content">
+                    <div class="dropzone" id="dropzone">
+                        <div class="dropzone__icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <h3>Arrastra archivos aquí</h3>
+                        <p>o haz clic para seleccionar</p>
+                        <span class="dropzone__formats">PDF, CSV — máximo 50 MB por archivo</span>
+                        <input type="file" id="file-input" multiple accept=".pdf,.csv" hidden>
+                    </div>
+
+                    <div class="file-queue" id="file-queue" style="display:none;">
+                        <h3>Archivos seleccionados</h3>
+                        <div class="file-queue__list" id="file-queue-list"></div>
+                        <div class="file-queue__actions">
+                            <button class="btn btn--primary" id="btn-upload" type="button">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                Subir Archivos
+                            </button>
+                            <button class="btn btn--outline" id="btn-clear-queue" type="button">Cancelar</button>
+                        </div>
+                    </div>
+
+                    <div class="upload-result" id="upload-result" style="display:none;"></div>
+
+                    <div class="reindex-section">
+                        <div class="reindex-section__info">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                            <div>
+                                <h4>Reindexar Base de Conocimiento</h4>
+                                <p>Tras subir archivos, reindexa para que estén disponibles en el chat</p>
+                            </div>
+                        </div>
+                        <button class="btn btn--accent" id="btn-reindex" type="button">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                            Reindexar Ahora
+                        </button>
+                    </div>
+
+                    <div class="current-files">
+                        <h3>Archivos en el sistema</h3>
+                        <div id="current-files-list" class="current-files__list">
+                            <p class="text-muted">Cargando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

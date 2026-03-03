@@ -1,0 +1,33 @@
+# ── Python ────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# ── Entorno ──────────────────────────
+.env
+.venv/
+venv/
+env/
+
+# ── IDE ──────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Docker / Qdrant ─────────────────
+qdrant_storage/
+qdrant_data/
+
+# ── OS ───────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ─────────────────────────────
+*.log
+logs/
